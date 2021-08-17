@@ -1,0 +1,68 @@
+<?php 
+get_header();
+
+$catName=get_queried_object();
+// print_r($catName);
+?>
+
+<h1><?php echo $catName->name; ?></h1>
+
+<?php
+    $wpnews=array(
+            'post_type'=>'news',
+            'post_status'=>'publish',
+            'tax_query'=>array(
+            	array(
+            		'taxonomy'=>'news_category',
+            		'field'=>'term_id',
+            		'terms'=>$catName->term_id
+            		)
+
+
+            )
+
+    );
+
+    $newsquery= new WP_Query($wpnews);
+
+    while ($newsquery->have_posts()) {
+        $newsquery->the_post();
+        $imagepath= wp_get_attachment_image_src(get_post_thumbnail_id(),'large'); //getting imagepath
+
+
+
+?>
+
+
+<section class="ftco-section bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-lg-4 ftco-animate">
+                <div class="blog-entry">
+                    <a href="blog-single.html" class="block-20 d-flex align-items-end" style="background-image: url('<?php echo $imagepath[0]; ?>' )">
+
+                        <div class="meta-date text-center p-2" style="color: white;">
+                          <?php echo get_the_date(); ?>
+                        </div>
+                    </a>
+                    <div class="text bg-white p-4">
+                        <h3 class="heading"><a href="#"><?php echo the_title();?></a></h3>
+                        <p><?php the_excerpt();?></p>
+                        <div class="d-flex align-items-center mt-4">
+                            <p class="mb-0"><a href="<?php the_permalink();?>" class="btn btn-primary">Read More <span class="ion-ios-arrow-round-forward"></span></a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<?php
+    }
+?>
+
+
+<?php
+get_footer();
+?>
